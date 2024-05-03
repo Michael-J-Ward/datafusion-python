@@ -1,0 +1,23 @@
+FROM python:3.10
+
+RUN apt-get update && \
+    apt-get install -y \
+    vim \
+    protobuf-compiler \
+    && apt update
+
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
+
+ARG PYTHON_ENV=my_env
+ENV PYTHON_ENV=$PYTHON_ENV
+
+RUN mkdir requirements
+
+COPY ./docker/set_python_env.sh /requirements/
+COPY requirements-310.txt /requirements/requirements.txt
+
+RUN bash ./requirements/set_python_env.sh $PYTHON_ENV
+
+WORKDIR /workspace
+
+CMD ["/bin/sh", "-c", "bash"]
