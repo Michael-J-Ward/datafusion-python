@@ -72,7 +72,7 @@ pub(crate) struct TokioRuntime(tokio::runtime::Runtime);
 /// The higher-level public API is defined in pure python files under the
 /// datafusion directory.
 #[pymodule]
-fn _internal(py: Python, m: &PyModule) -> PyResult<()> {
+fn _datafusion_internal(py: Python, m: &PyModule) -> PyResult<()> {
     // Register the Tokio Runtime as a module attribute so we can reuse it
     m.add(
         "runtime",

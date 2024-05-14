@@ -16,7 +16,7 @@
 # under the License.
 
 
-from ._internal import functions
+from ._datafusion_internal import functions
 
 
 def __getattr__(name):

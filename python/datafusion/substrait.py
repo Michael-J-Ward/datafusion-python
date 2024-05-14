@@ -16,7 +16,7 @@
 # under the License.
 
 
-from ._internal import substrait
+from ._datafusion_internal import substrait
 
 
 def __getattr__(name):

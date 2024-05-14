@@ -56,7 +56,7 @@ profile = "black"
 
 [tool.maturin]
 python-source = "python"
-module-name = "datafusion._internal"
+module-name = "datafusion._datafusion_internal"
 include = [
     { path = "Cargo.lock", format = "sdist" }
 ]

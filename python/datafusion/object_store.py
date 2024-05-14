@@ -16,7 +16,7 @@
 # under the License.
 
 
-from ._internal import object_store
+from ._datafusion_internal import object_store
 
 
 def __getattr__(name):

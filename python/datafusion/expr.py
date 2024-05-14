@@ -16,7 +16,7 @@
 # under the License.
 
 
-from ._internal import expr
+from ._datafusion_internal import expr
 
 
 def __getattr__(name):
