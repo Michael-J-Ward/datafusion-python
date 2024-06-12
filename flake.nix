@@ -24,7 +24,7 @@
             pkgs.openssl
             pkgs.protobuf
           ];
-          rust-toolchain = pkgs.symlinkJoin {
+          rust-toolchain = python: pkgs.symlinkJoin {
             name = "rust-toolchain";
             paths = [
               pkgs.rustc
@@ -33,7 +33,7 @@
               pkgs.cargo-watch
               pkgs.rust-analyzer
               pkgs.rustPlatform.rustcSrc
-              (pkgs.python3.withPackages (python-pkgs: [
+              (python.withPackages (python-pkgs: [
                 python-pkgs.numpy
                 python-pkgs.pyarrow
               ]))
@@ -118,9 +118,59 @@
             buildInputs = nonRustDeps;
             nativeBuildInputs = with pkgs; [
               just
-              rust-toolchain
+              (rust-toolchain python311)
               (pkgs.hiPrio pkgs.bashInteractive) # needed so it doesn't mangle terminal in vscode
               python311
+              pre-commit
+            ];
+            # RUST_BACKTRACE = 1;
+          };
+
+          # Rust dev environment - python310
+          devShells.py310 = pkgs.mkShell {
+            inherit NIX_LD_LIBRARY_PATH;
+            inputsFrom = [
+              config.treefmt.build.devShell
+            ];
+            shellHook = ''
+              # For rust-analyzer 'hover' tooltips to work.
+              export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
+
+              echo
+              echo "🍎🍎 Run 'just <recipe>' to get started"
+              just
+            '';
+            buildInputs = nonRustDeps;
+            nativeBuildInputs = with pkgs; [
+              just
+              (rust-toolchain python310)
+              (pkgs.hiPrio pkgs.bashInteractive) # needed so it doesn't mangle terminal in vscode
+              python310
+              pre-commit
+            ];
+            # RUST_BACKTRACE = 1;
+          };
+
+          # Rust dev environment - python37
+          devShells.py37 = pkgs.mkShell {
+            inherit NIX_LD_LIBRARY_PATH;
+            inputsFrom = [
+              config.treefmt.build.devShell
+            ];
+            shellHook = ''
+              # For rust-analyzer 'hover' tooltips to work.
+              export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
+
+              echo
+              echo "🍎🍎 Run 'just <recipe>' to get started"
+              just
+            '';
+            buildInputs = nonRustDeps;
+            nativeBuildInputs = with pkgs; [
+              just
+              (rust-toolchain python37)
+              (pkgs.hiPrio pkgs.bashInteractive) # needed so it doesn't mangle terminal in vscode
+              python37
               pre-commit
             ];
             # RUST_BACKTRACE = 1;
