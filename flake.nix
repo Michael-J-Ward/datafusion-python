@@ -36,6 +36,8 @@
               (python.withPackages (python-pkgs: [
                 python-pkgs.numpy
                 python-pkgs.pyarrow
+                python-pkgs.pandas
+                python-pkgs.polars
               ]))
               pkgs.maturin
             ];
@@ -146,6 +148,31 @@
               (rust-toolchain python310)
               (pkgs.hiPrio pkgs.bashInteractive) # needed so it doesn't mangle terminal in vscode
               python310
+              pre-commit
+            ];
+            # RUST_BACKTRACE = 1;
+          };
+
+          # Rust dev environment - python310
+          devShells.py312 = pkgs.mkShell {
+            inherit NIX_LD_LIBRARY_PATH;
+            inputsFrom = [
+              config.treefmt.build.devShell
+            ];
+            shellHook = ''
+              # For rust-analyzer 'hover' tooltips to work.
+              export RUST_SRC_PATH=${pkgs.rustPlatform.rustLibSrc}
+
+              echo
+              echo "🍎🍎 Run 'just <recipe>' to get started"
+              just
+            '';
+            buildInputs = nonRustDeps;
+            nativeBuildInputs = with pkgs; [
+              just
+              (rust-toolchain python312)
+              (pkgs.hiPrio pkgs.bashInteractive) # needed so it doesn't mangle terminal in vscode
+              python312
               pre-commit
             ];
             # RUST_BACKTRACE = 1;
