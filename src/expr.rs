@@ -188,8 +188,8 @@ impl PyExpr {
 
     /// Returns the name of this expression as it should appear in a schema. This name
     /// will not include any CAST expressions.
-    fn display_name(&self) -> PyResult<String> {
-        Ok(self.expr.display_name()?)
+    fn schema_name(&self) -> PyResult<String> {
+        Ok(format!("{}", self.expr.schema_name()))
     }
 
     /// Returns a full and complete string representation of this expression.
