@@ -2,6 +2,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     # Dev tools
@@ -14,8 +18,13 @@
       imports = [
         inputs.treefmt-nix.flakeModule
       ];
-      perSystem = { config, self', pkgs, lib, system, ... }:
+      perSystem = { config, self', lib, system, ... }:
         let
+          pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [ (import inputs.rust-overlay) ];
+            config = { };
+          };
           cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
           nonRustDeps = [
             pkgs.pkg-config
@@ -27,8 +36,7 @@
           rust-toolchain = python: pkgs.symlinkJoin {
             name = "rust-toolchain";
             paths = [
-              pkgs.rustc
-              pkgs.cargo
+              (pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml)
               pkgs.clippy
               pkgs.cargo-watch
               pkgs.rust-analyzer
@@ -40,6 +48,11 @@
                 python-pkgs.polars
               ]))
               pkgs.maturin
+              # used for cargo llvm-cov coverage
+              # pkgs.grcov
+              # pkgs.cargo-binutils
+              # pkgs.cargo-llvm-cov
+              # pkgs.rustc.llvmPackages.llvm
             ];
           };
           NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
