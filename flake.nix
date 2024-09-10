@@ -46,6 +46,7 @@
                 python-pkgs.pyarrow
                 python-pkgs.pandas
                 python-pkgs.polars
+                python-pkgs.PyGithub
               ]))
               pkgs.maturin
               # used for cargo llvm-cov coverage
