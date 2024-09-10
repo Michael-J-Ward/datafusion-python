@@ -16,6 +16,7 @@
 // under the License.
 
 use std::any::Any;
+use std::borrow::Cow;
 
 use datafusion::arrow::datatypes::SchemaRef;
 use datafusion::logical_expr::{Expr, TableProviderFilterPushDown, TableSource};
@@ -151,17 +152,6 @@ impl SqlTableSource {
     pub fn filepaths(&self) -> Option<&Vec<String>> {
         self.filepaths.as_ref()
     }
-}
-
-/// Implement TableSource, used in the logical query plan and in logical query optimizations
-impl TableSource for SqlTableSource {
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
-
-    fn schema(&self) -> SchemaRef {
-        self.schema.clone()
-    }
 
     fn supports_filter_pushdown(
         &self,
@@ -179,12 +169,22 @@ impl TableSource for SqlTableSource {
             Ok(TableProviderFilterPushDown::Unsupported)
         }
     }
+}
+
+/// Implement TableSource, used in the logical query plan and in logical query optimizations
+impl TableSource for SqlTableSource {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn schema(&self) -> SchemaRef {
+        self.schema.clone()
+    }
 
     fn table_type(&self) -> datafusion::logical_expr::TableType {
         datafusion::logical_expr::TableType::Base
     }
 
-    #[allow(deprecated)]
     fn supports_filters_pushdown(
         &self,
         filters: &[&Expr],
@@ -195,7 +195,7 @@ impl TableSource for SqlTableSource {
             .collect()
     }
 
-    fn get_logical_plan(&self) -> Option<&datafusion::logical_expr::LogicalPlan> {
+    fn get_logical_plan(&self) -> Option<Cow<datafusion::logical_expr::LogicalPlan>> {
         None
     }
 }
